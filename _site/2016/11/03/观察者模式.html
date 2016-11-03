@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>观察者模式</title>
+  <meta name="description" content="什么是观察者模式">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="http://localhost:4000/2016/11/03/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F.html">
+  <link rel="alternate" type="application/rss+xml" title="LeaYw Blog" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">LeaYw Blog</a>
+
+    <nav class="site-nav">
+      <span class="menu-icon">
+        <svg viewBox="0 0 18 15" width="18px" height="15px">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </span>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">观察者模式</h1>
+    <p class="post-meta"><time datetime="2016-11-03T00:00:00+08:00" itemprop="datePublished">Nov 3, 2016</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="section">什么是观察者模式</h2>
+
+<p>观察者模式定义了对象之间的一对多关系，当一个对象改变状态时，它的所有依赖者都会收到通知并自动更新。</p>
+
+<h3 id="section-1">模拟现实中的一种需求</h3>
+<ul>
+  <li><strong>报社</strong>出版了人民日报，
+    <ol>
+      <li><strong>A</strong>和<strong>B</strong>都在报社<strong>订阅</strong>了人民日报</li>
+      <li>这个时候<strong>C</strong>也想订一份人民日报，<strong>报社</strong>说那好，你交钱我就给你订上，以后我每期人民日报你都可以收到，<strong>C</strong>交了钱，订了报纸。</li>
+      <li>以后每天<strong>A</strong>、<strong>B</strong>、<strong>C</strong>都会在门口拿到一份人民日报。</li>
+      <li>后来<strong>B</strong>觉得看报纸没什么意思，就跟<strong>报社</strong>说不想订了，你把钱退给我吧，<strong>报社</strong>说行，钱退给你，<strong>订阅名单</strong>里边就没有你了，以后就不给你报纸了。</li>
+      <li>只要报社正常经营，会有越来越多的ABC。</li>
+    </ol>
+  </li>
+</ul>
+
+<h3 id="section-2">实现方法</h3>
+
+<ul>
+  <li>开始时A、B订阅了报纸，代码大概是这样</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class 报社 {
+	String  报纸;
+	
+	//报社本身属性。。。。
+	
+	//假设每次新出报纸会调用这个方法
+	public void onPublic(){
+		a.门口拿包装纸(报纸);
+		b.门口拿包装纸(报纸);
+	}
+}
+
+public class A {
+	public void 门口拿报纸(String 报纸){
+		System.out.println("看国家大事");
+	}
+}
+
+public class B {
+	public void 门口拿报纸(String 报纸){
+		System.out.println("看娱乐新闻！！！");
+	}
+}
+</code></pre>
+</div>
+<ul>
+  <li>C也想看报纸，所以接着写</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class 报社 {
+	String  报纸;
+	
+	//报社本身属性。。。。
+	
+	//假设每次新出报纸会调用这个方法
+	public void onPublic(){
+		a.门口拿包装纸(报纸);
+		b.门口拿包装纸(报纸);
+		c.门口拿包装纸(报纸);
+	}
+}
+
+public class C {
+	public void 门口拿报纸(String 报纸){
+		System.out.println("看新发地菜价！！");
+	}
+}
+</code></pre>
+</div>
+
+<ul>
+  <li>B又不想订报纸了，那就把B注释掉</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class 报社 {
+	String  报纸;
+	
+	//报社本身属性。。。。
+	
+	//假设每次新出报纸会调用这个方法
+	public void onPublic(){
+		a.门口拿包装纸(报纸);
+		//b.门口拿包装纸(报纸);
+		c.门口拿包装纸(报纸);
+	}
+}
+</code></pre>
+</div>
+
+<ul>
+  <li>当ABC越来越多的时候代码就会成了这样</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class 报社 {
+	String  报纸;
+	
+	//报社本身属性。。。。
+	
+	//每次新出报纸会调用这个方法
+	public void onPublic(){
+		a.门口拿包装纸(报纸);
+//		b.门口拿包装纸(报纸);
+		c.门口拿包装纸(报纸);
+		d.门口拿包装纸(报纸);
+		e.门口拿包装纸(报纸);
+//		f.门口拿包装纸(报纸);
+		g.门口拿包装纸(报纸);
+		h.门口拿包装纸(报纸);
+//		i.门口拿包装纸(报纸);
+		j.门口拿包装纸(报纸);
+		k.门口拿包装纸(报纸);
+		...
+	}
+}
+</code></pre>
+</div>
+
+<ul>
+  <li>所以，正如你看到的
+    <ol>
+      <li>对于每一个想订阅报纸的人，我们都要修改代码</li>
+      <li>无法在运行的时候动态的增加或者删除观察者（订阅报纸的人）</li>
+      <li>针对的是具体实现编程，并不是针对接口编程</li>
+      <li>没有封装改变的部分</li>
+    </ol>
+  </li>
+</ul>
+
+<p>OK，报社改个名称叫Observable，ABC改个名称叫Observer，知道怎么订报纸就知道什么是观察者模式了。</p>
+
+<p>明确三个关键词，Observable（被观察者）、subject（订阅）、Observer（观察者）。Observable（报社）是一个有各种状态的对象，Observer（A、B、C）subject（订阅）了Observable（报社）</p>
+
+<p>那就用观察者模式来实现一下上面的需求，实现观察者模式的方法不止一种，最常见的就是实现Observabe和Observer接口，下面具体实现，对比看一下优点。</p>
+
+<h3 id="section-3">观察者模式接口实现</h3>
+
+<ul>
+  <li>Observable</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public interface Observable {
+	void registerObserver(Observer o);
+	void removeObserver(Observer  o);
+	//更新状态的时候会掉用这个方法
+	void notifyObserver();
+}
+</code></pre>
+</div>
+
+<ul>
+  <li>Observer</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public interface Observer {
+	void 门口看报纸(String 报纸);
+}
+</code></pre>
+</div>
+
+<ul>
+  <li>接下来让<strong>报社</strong>这个类实现Observable接口，<strong>ABC</strong>实现Observer接口</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class 报社 implements Observable {
+	private List&lt;Observer&gt; observers;
+	String  报纸;
+	
+	public 报社() {
+		observers = new ArrayList&lt;&gt;();
+	}
+	
+	@Override
+	public void notifyObserver() {
+		for(Observer o:observers){
+			o.门口看报纸(报纸);
+		}
+		
+	}
+	
+	@Override
+	public void registerObserver(Observer o) {
+		observers.add(o);
+		
+	}
+	
+	@Override
+	public void removeObserver(Observer o) {
+		int index = observers.indexOf(o);
+		if(index&gt;0){
+			observers.remove(index);
+		}
+	}
+}
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class A implements Observer{
+	
+	@Override
+	public void 门口看报纸(String 报纸) {
+		System.out.println("看国家大事");
+		
+	}
+}
+</code></pre>
+</div>
+
+<ul>
+  <li>接下来就是订报纸</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Test {
+
+	public static void main(String[] args) {
+		报社 test = new 报社();
+		A a =new A();
+		B b = new B();
+		//a 添加订阅
+		test.registerObserver(a);
+		//b 添加订阅
+		test.registerObserver(b);
+		//c 添加订阅
+		test.registerObserver(c);
+		//b 移除订阅
+		test.removeObserver(b);
+	}
+}
+</code></pre>
+</div>
+<ul>
+  <li>所以，正如你看到的
+    <ol>
+      <li>对于每一个想订阅报纸的人，我们<strong>不需要</strong>修改代码，<strong>只要实现了Observer接口后registerObserver就好了。</strong></li>
+      <li><del>无法</del><mark>随意</mark>在运行的时候动态的增加或者删除观察者（订阅报纸的人）</li>
+      <li>针对的是<del>具体实现</del><mark>接口</mark>编程，并不是针对<del>接口</del><mark>具体实现</mark>编程</li>
+      <li><del>没有</del>封装改变的部分</li>
+    </ol>
+  </li>
+</ul>
+
+<h3 id="section-4">结束语</h3>
+<p>观察者模式在JDK就有实现，只不过是用类实现的，需要继承，众所周知，java是单继承的，所以有一定的黑暗面。另外，Java swing 中的JButton、Android中给Button设置OnClickListenner以及现在非常火的RxJava都是观察者模式的实现，有兴趣的可以看看源码，OK就到这里了，欢迎指正。</p>
+
+  </div>
+
+  
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">LeaYw Blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>
+            
+              LeaYw
+            
+            </li>
+            
+            <li><a href="mailto:liyawei8696@163.com">liyawei8696@163.com</a></li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/LeaYw"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">LeaYw</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>note for codding
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
