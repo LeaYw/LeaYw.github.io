@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>装饰者模式</title>
+  <meta name="description" content="定义 装饰者模式动态的将功能加到对象上，若要扩展功能，装饰者提供了比继承更有弹性的替代方案。">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="http://localhost:4000/2016/11/04/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F.html">
+  <link rel="alternate" type="application/rss+xml" title="LeaYw Blog" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">LeaYw Blog</a>
+
+    <nav class="site-nav">
+      <span class="menu-icon">
+        <svg viewBox="0 0 18 15" width="18px" height="15px">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </span>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">装饰者模式</h1>
+    <p class="post-meta"><time datetime="2016-11-04T00:00:00+08:00" itemprop="datePublished">Nov 4, 2016</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="section">定义</h2>
+<ul>
+  <li>装饰者模式动态的将功能加到对象上，若要扩展功能，装饰者提供了比继承更有弹性的替代方案。</li>
+</ul>
+
+<h2 id="section-1">几个要点</h2>
+
+<ul>
+  <li><strong>装饰者和被装饰者有相同的父类</strong>。</li>
+  <li>你可以用一个或多个装饰者装饰一个对象。</li>
+  <li>既然装饰者和被装饰者有相同的父类，所以在任何需要原始对象（被包装对象）的场合，可以用装饰过的对象代替它。</li>
+  <li>装饰者可以在所委托被装饰者的行为之前与／或之后，加上自己的行为，以达到特定的目的</li>
+  <li>对象可以在任何时候被装饰，所以可以在运行时动态地、不限量地用你喜欢的装饰者装饰对象</li>
+</ul>
+
+<h2 id="java-ioinputstreamioinputstream">看看Java I/O中的InputStream怎么用的装饰者模式(io包中应用大量的装饰者模式，以InputStream为例)</h2>
+
+<h3 id="inputstream">InputStream</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>/**
+ * This abstract class is the superclass of all classes representing
+ * an input stream of bytes.
+ *
+ * &lt;p&gt; Applications that need to define a subclass of &lt;code&gt;InputStream&lt;/code&gt;
+ * must always provide a method that returns the next byte of input.
+public abstract class InputStream implements Closeable {
+		...
+}
+</code></pre>
+</div>
+
+<blockquote>
+  <p>InputStream 是所有字节输入流的父类，继承InputStream的子类都要实现返回下一个输入字节的方法（read()）.</p>
+</blockquote>
+
+<h3 id="fileinputstream">FileInputStream</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>/**
+ * A &lt;code&gt;FileInputStream&lt;/code&gt; obtains input bytes
+ * from a file in a file system. What files
+ * are  available depends on the host environment.
+ *
+ * &lt;p&gt;&lt;code&gt;FileInputStream&lt;/code&gt; is meant for reading streams of raw bytes
+ * such as image data. For reading streams of characters, consider using
+ * &lt;code&gt;FileReader&lt;/code&gt;.
+public class FileInputStream extends InputStream {
+	...
+}
+</code></pre>
+</div>
+<blockquote>
+  <p>FileInputStream主要功能是从文件中读入字节</p>
+</blockquote>
+
+<h3 id="bufferedinputstream">BufferedInputStream</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>/**
+ * A &lt;code&gt;BufferedInputStream&lt;/code&gt; adds
+ * functionality to another input stream-namely,
+ * the ability to buffer the input and to
+ * support the &lt;code&gt;mark&lt;/code&gt; and &lt;code&gt;reset&lt;/code&gt;
+ * methods. When  the &lt;code&gt;BufferedInputStream&lt;/code&gt;
+ * is created, an internal buffer array is
+ * created. As bytes  from the stream are read
+ * or skipped, the internal buffer is refilled
+ * as necessary  from the contained input stream,
+ * many bytes at a time. The &lt;code&gt;mark&lt;/code&gt;
+ * operation  remembers a point in the input
+ * stream and the &lt;code&gt;reset&lt;/code&gt; operation
+ * causes all the  bytes read since the most
+ * recent &lt;code&gt;mark&lt;/code&gt; operation to be
+ * reread before new bytes are  taken from
+ * the contained input stream.
+ */
+public
+class BufferedInputStream extends FilterInputStream {
+	...
+}
+</code></pre>
+</div>
+<blockquote>
+  <p>BufferedInputStream给InputStream增加一个功能：利用缓存高效读入字节，支持标记和重置。</p>
+</blockquote>
+
+<ul>
+  <li>FileInputStream是InputStream的子类，继承之后针对文件读取添加功能，BufferedInputStream是FilterInputStream的子类，FilterInputStream继承了InputStream，所以BufferedInputStream同样是InputStream的子类，构造方法中需要传入一个InputStream。所以如何高效的读入文件就是这样了</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class IOTest {
+	public static void main(String[] args) {
+		File file = new File("test.txt");
+		try {
+			BufferedInputStream bi = new BufferedInputStream(new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+}
+</code></pre>
+</div>
+<ul>
+  <li>创建出来的FileInputStream作为被包装者传给BufferedInputStream，FileInputStream只负责读入文件，当想要提高效率的时候并没有在FileInputStream内部添加缓冲的方法，而是将起作为被装饰者传给BufferedInputStream，BufferedInputStream负责添加高效读入的功能，实现高效率读入文件.单一原则、开闭原则（对扩展开放，对修改关闭）体现的淋漓尽致！</li>
+</ul>
+
+<h2 id="section-2">结束语</h2>
+<p>仔细品味装饰者模式的要点，结合Java的IO操作就可以很好的理解装饰者模式了，最后附上一篇结合装饰者模式 <a href="http://blog.csdn.net/lmj623565791/article/details/51854533">优雅的为RecyclerView添加Header以及Footer的博文</a>，加深理解。</p>
+
+  </div>
+
+  
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">LeaYw Blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>
+            
+              LeaYw
+            
+            </li>
+            
+            <li><a href="mailto:liyawei8696@163.com">liyawei8696@163.com</a></li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/LeaYw"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">LeaYw</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>note for codding
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
