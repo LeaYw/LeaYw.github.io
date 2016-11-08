@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>策略模式</title>
+  <meta name="description" content="需求 以动物为例，随便举几个例子，鸡、鸭、鱼、猫、狗。 简单看一下动物的动作">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="http://localhost:4000/2016/11/08/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F.html">
+  <link rel="alternate" type="application/rss+xml" title="LeaYw Blog" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">LeaYw Blog</a>
+
+    <nav class="site-nav">
+      <span class="menu-icon">
+        <svg viewBox="0 0 18 15" width="18px" height="15px">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </span>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">策略模式</h1>
+    <p class="post-meta"><time datetime="2016-11-08T00:00:00+08:00" itemprop="datePublished">Nov 8, 2016</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h3 id="section">需求</h3>
+<p>以动物为例，随便举几个例子，鸡、鸭、鱼、猫、狗。<br />
+简单看一下动物的动作</p>
+
+<ul>
+  <li>鸡</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Chicken {
+	public void drinkWater(){
+		System.out.println("喝水");
+	}
+	
+	public void voice(){
+		System.out.println("咯咯！");
+	}
+	
+	public void walk(){
+		System.out.println("两条腿走路");
+	}
+	
+	public void fly(){
+		System.out.println("挥动翅膀飞");
+	}
+}
+</code></pre>
+</div>
+
+<ul>
+  <li>鸭</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Duck {
+	public void drinkWater(){
+		System.out.println("喝水");
+	}
+	
+	public void voice(){
+		System.out.println("嘎嘎！");
+	}
+	
+	public void walk(){
+		System.out.println("两条腿走路");
+	}
+	
+	public void fly(){
+		System.out.println("挥动翅膀飞");
+	}
+}
+</code></pre>
+</div>
+
+<ul>
+  <li>鱼</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Fish {
+	public void drinkWater(){
+		System.out.println("喝水");
+	}
+	
+	public void swim(){
+		System.out.println("游泳！");
+	}
+}
+</code></pre>
+</div>
+
+<ul>
+  <li>猫</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Cat {
+	public void drinkWater(){
+		System.out.println("喝水");
+	}
+	
+	public void voice(){
+		System.out.println("喵喵！");
+	}
+	
+	public void walk(){
+		System.out.println("四条腿走路");
+	}
+}
+</code></pre>
+</div>
+
+<ul>
+  <li>狗</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Dog {
+	public void drinkWater(){
+		System.out.println("喝水");
+	}
+	
+	public void voice(){
+		System.out.println("汪汪！");
+	}
+	
+	public void walk(){
+		System.out.println("四条腿走路");
+	}
+}
+</code></pre>
+</div>
+
+<p>这个时候你就要说了，这样写了好多重复的代码，为什么不抽取一个父类呢。</p>
+
+<h3 id="section-1">两种抽取思路</h3>
+
+<ul>
+  <li>抽取公共方法</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Animal {
+	public void drinkWater() {
+		System.out.println("喝水");
+	}
+}
+</code></pre>
+</div>
+<blockquote>
+  <p>这样抽取完成后，所有子类不需要写drinkWater这个方法了，但是鸡、鸭都要写两条腿走路和挥动翅膀飞的方法，猫和狗都要写四条腿走路的方法，而且这种不变的部分并没有得到封装。</p>
+</blockquote>
+
+<ul>
+  <li>所有方法放到父类：</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Animal {
+	public void drinkWater() {
+		System.out.println("喝水");
+	}
+	
+	public void chickenVoice(){
+		System.out.println("咯咯！");
+	}
+	
+	public void walk2(){
+		System.out.println("两条腿走路");
+	}
+	
+	public void fly(){
+		System.out.println("挥动翅膀飞");
+	}
+	
+	public void duckVoice(){
+		System.out.println("嘎嘎！");
+	}
+
+	public void swim(){
+		System.out.println("游泳！");
+	}
+	
+	public void catVoice(){
+		System.out.println("喵喵！");
+	}
+	
+	public void walk4(){
+		System.out.println("四条腿走路");
+	}
+	
+	public void voice(){
+		System.out.println("汪汪！");
+	}
+}
+</code></pre>
+</div>
+<blockquote>
+  <p>这样抽取完成后，所有的动物都会继承得到各种方法，子类里不需要写任何方法（当然这是一种比较极端的情况）。但是你会发现鸡也可以四条腿走路，而且还会游泳，还会喵喵、嘎嘎、汪汪叫，鱼竟然会飞了。</p>
+</blockquote>
+
+<h3 id="section-2">策略模式</h3>
+<p>定义算法族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用的客户。</p>
+
+<ul>
+  <li>定义算法族，分别封装起来</li>
+</ul>
+
+<blockquote>
+  <p>以走路的接口为例</p>
+</blockquote>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public interface IWalke {
+	void walk();
+}
+</code></pre>
+</div>
+
+<p>所有走路的动作都要实现这个接口，例如：<br />
+两条腿走路</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class WalkBy2Legs implements IWalke {
+	@Override
+	public void walk() {
+		System.out.println("两条腿走路");
+	}
+}
+</code></pre>
+</div>
+<p>四条腿走路</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class WalkBy4Legs implements IWalke {
+	@Override
+	public void walk() {
+		System.out.println("四条腿走路");
+	}
+}
+</code></pre>
+</div>
+<p>不会走路</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class WalkNoWay implements IWalke {
+	@Override
+	public void walk() {
+	
+	}
+}
+</code></pre>
+</div>
+<ul>
+  <li>让算法的变化独立于客户的使用</li>
+</ul>
+
+<p>父类Animal</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Animal {
+	protected IWalk iWalk;
+	
+	public void drinkWater() {
+		System.out.println("喝水");
+	}
+	
+	public void walk(){
+		iWalk.walk();
+	}
+}
+</code></pre>
+</div>
+
+<p>接着写鸡和猫，其余的类似<br />
+鸡(当然两条腿走路的鸭子也是这样写)</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Chicken extends Animal{
+	
+	public Chicken(){
+		iWalk = new WalkBy2Legs();
+	}
+	public void drinkWater(){
+		System.out.println("喝水");
+	}
+	...
+}
+</code></pre>
+</div>
+<p>猫(当然四条腿走路的狗也是这样写)</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Cat extends Animal{
+	public Cat(){
+		iWalk = new WalkBy4Legs();
+	}
+	
+	public void drinkWater(){
+		System.out.println("喝水");
+	}
+	...
+}
+</code></pre>
+</div>
+
+<p>鱼</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Fish extends Animal{
+	
+	public Fish(){
+		iWalk = new WalkNoWay();
+	}
+	
+	public void drinkWater(){
+		System.out.println("喝水");
+	}
+	...
+}
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>也许你刚看到这的时候并不会感觉代码简单了，的确，代码没有简单，反而复杂了，那么，这样写的好处在哪？</p>
+
+    <ol>
+      <li>代码并没有在多个子类重复。</li>
+      <li>应用中可能需要变化之处独立了出来，没有和那些不需要变化的代码混在一起。正如我们封装的IWalk接口，可能变化的是走路的方式，不变的是Animal的walk方法，方便以后可以轻易的改动或者扩展此部分。</li>
+      <li>针对接口编程，而不是针对实现编程。最开始的实现方式每种动物的行为方式捆绑在动物本身，现在专门有一些动作类实现了动作接口，由这些动作类而不是动物本身实现动作，所以实际的实现并没有绑定死在各种动物本身。</li>
+      <li>通过给每个接口设置入口，我们可以在运行时动态地改变动物的行为方式。</li>
+    </ol>
+  </li>
+</ul>
+
+<h3 id="section-3">结束语</h3>
+
+<p>赘述这么多，相信如果有过项目框架抽取经验的人会深有体会。可以先放到脑子里，试着应用到自己的项目之中，你才会发现它的精巧之处，去发现吧。</p>
+
+  </div>
+
+  
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">LeaYw Blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>
+            
+              LeaYw
+            
+            </li>
+            
+            <li><a href="mailto:liyawei8696@163.com">liyawei8696@163.com</a></li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/LeaYw"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">LeaYw</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>note for codding
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
